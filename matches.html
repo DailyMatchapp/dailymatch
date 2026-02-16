@@ -162,6 +162,25 @@ iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
 }
 
 footer { text-align: center; padding: 2rem; border-top: var(--glass-border); color: var(--text-muted); background: rgba(11, 15, 25, 0.95); margin-top: auto; }
+
+  .top-alert {
+    background: #111827;
+    color: #cbd5e1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+.top-alert i {
+    color: #3b82f6;
+    font-size: 18px;
+    vertical-align: middle;
+}   
 </style>
 </head>
 <body>
@@ -177,6 +196,12 @@ footer { text-align: center; padding: 2rem; border-top: var(--glass-border); col
         </div>
     </nav>
 
+  <!-- شريط التنبيه بالتوقيت -->
+    <div class="top-alert">
+        <i class='bx bx-time-five'></i>
+        <span>تنويه: جميع  المباريات  في الجدول أدناه بتوقيت غرينتش (GMT)</span>
+    </div>
+    
     <!-- المحتوى الرئيسي -->
     <div class="container">
         
