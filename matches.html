@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول المباريات | Daily Match</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="logo">Daily Match</a>
+        <div class="nav-links">
+            <a href="index.html">الرئيسية</a>
+            <a href="matches.html" class="active">جدول المباريات</a>
+            <a href="privacy.html">الخصوصية</a>
+            <a href="contact.html">اتصل بنا</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="text-align: center; min-height: 50vh; display: flex; flex-direction: column; justify-content: center;">
+            <h2 style="color: #fff; margin-bottom: 20px;">مباريات اليوم</h2>
+            
+            <!-- الجدول فارغ حالياً -->
+            <div style="overflow-x: auto;">
+                <table class="matches-table">
+                    <thead>
+                        <tr>
+                            <th>البطولة</th>
+                            <th>الفريق الأول</th>
+                            <th>النتيجة / التوقيت</th>
+                            <th>الفريق الثاني</th>
+                            <th>القناة الناقلة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- سيتم إضافة المباريات هنا -->
+                        <tr>
+                            <td colspan="5" style="padding: 40px; color: var(--text-muted);">
+                                <i class="fas fa-futbol" style="font-size: 30px; margin-bottom: 10px; display: block;"></i>
+                                لا توجد مباريات معروضة حالياً، يرجى العودة لاحقاً.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Daily Match.</p>
+    </footer>
+
+</body>
+</html>
