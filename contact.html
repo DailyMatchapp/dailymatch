@@ -1,42 +1,109 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اتصل بنا | Daily Match</title>
-     <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: '#3b82f6', darkBg: '#0f172a', cardBg: '#1e293b' }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
+    </style>
 </head>
-<body>
-    <nav class="navbar">
-        <a href="index.html" class="logo">Daily Match</a>
-        <div class="nav-links">
-            <a href="index.html">الرئيسية</a>
-            <a href="contact.html" class="active">اتصل بنا</a>
+<body class="font-cairo bg-gray-50 dark:bg-darkBg text-slate-900 dark:text-slate-200 antialiased transition-colors duration-300 flex flex-col min-h-screen">
+
+    <nav class="fixed w-full z-50 glass-nav border-b border-gray-200 dark:border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <a href="index.html" class="text-xl sm:text-2xl font-800 text-primary tracking-tight italic">DAILY<span class="text-slate-900 dark:text-white">MATCH</span></a>
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" class="p-2.5 bg-gray-200 dark:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110"><i id="themeIcon" class="fas fa-moon"></i></button>
+                    <a href="index.html" class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-bold hover:bg-primary hover:text-white transition">العودة للرئيسية</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="card" style="max-width: 600px; margin: 0 auto;">
-            <h1 style="text-align: center;">تواصل معنا</h1>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">
-                يسعدنا سماع آرائكم واقتراحاتكم. يمكنكم التواصل معنا عبر الطرق التالية:
-            </p>
+    <main class="flex-grow pt-32 pb-20 px-6 flex items-center">
+        <div class="max-w-5xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- معلومات التواصل -->
+            <div>
+                <h1 class="text-4xl sm:text-5xl font-800 mb-6">تواصل معنا</h1>
+                <p class="text-slate-600 dark:text-slate-400 mb-8 text-lg">
+                    هل لديك اقتراح لتطوير التطبيق؟ أو تواجه مشكلة تقنية؟ فريق الدعم جاهز لمساعدتك.
+                </p>
+                
+                <div class="space-y-6">
+                    <a href="https://t.me/DailyMatch_Apk" target="_blank" class="flex items-center gap-4 p-4 bg-white dark:bg-cardBg rounded-2xl border border-gray-100 dark:border-white/5 hover:border-primary transition group">
+                        <div class="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center text-xl shadow-lg shadow-blue-500/30 group-hover:scale-110 transition"><i class="fab fa-telegram-plane"></i></div>
+                        <div>
+                            <h3 class="font-bold text-lg">قناة التلغرام</h3>
+                            <p class="text-slate-500 text-sm">للحصول على آخر التحديثات والدعم المباشر</p>
+                        </div>
+                    </a>
 
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <a href="mailto:dailymatchapk@gmail.com" class="btn btn-secondary" style="justify-content: center;">
-                    <i class="fas fa-envelope"></i> dailymatchapk@gmail.com
-                </a>
-                <a href="//t.me/DailyMatch_App" class="btn btn-secondary" style="justify-content: center; border-color: #0088cc; color: #0088cc;">
-                    <i class="fab fa-telegram"></i> تواصل عبر تلغرام
-                </a>
-                <a href="//www.facebook.com/share/Zrs81ZiFtk8ZsS47/" class="btn btn-secondary" style="justify-content: center; border-color: #1877F2; color: #1877F2;">
-                    <i class="fab fa-facebook"></i> صفحتنا على فيسبوك
-                </a>
+                    <a href="mailto:support@dailymatch.com" class="flex items-center gap-4 p-4 bg-white dark:bg-cardBg rounded-2xl border border-gray-100 dark:border-white/5 hover:border-primary transition group">
+                        <div class="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center text-xl shadow-lg shadow-orange-500/30 group-hover:scale-110 transition"><i class="fas fa-envelope"></i></div>
+                        <div>
+                            <h3 class="font-bold text-lg">البريد الإلكتروني</h3>
+                            <p class="text-slate-500 text-sm">mailto:dailymatchapk@gmail.com</p>
+                        </div>
+                    </a>
+                </div>
             </div>
+
+            <!-- نموذج (شكلي فقط) -->
+            <div class="bg-white dark:bg-cardBg p-8 rounded-[2.5rem] shadow-2xl border border-gray-100 dark:border-white/5">
+                <form action="#" onsubmit="alert('شكراً لتواصلك معنا! سيتم الرد قريباً.'); return false;">
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">الاسم</label>
+                        <input type="text" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition" placeholder="اسمك الكريم">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">البريد الإلكتروني</label>
+                        <input type="email" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition" placeholder="example@mail.com">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-bold mb-2 text-slate-700 dark:text-slate-300">الرسالة</label>
+                        <textarea rows="4" class="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition" placeholder="كيف يمكننا مساعدتك؟"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition transform active:scale-95">إرسال الرسالة</button>
+                </form>
+            </div>
+
         </div>
-    </div>
-    
-    <footer><p>&copy; 2025 Daily Match.</p></footer>
+    </main>
+
+    <footer class="py-8 border-t border-gray-200 dark:border-white/5 bg-white/50 dark:bg-black/20 text-center">
+        <p class="text-slate-500 text-sm font-medium">© <script>document.write(new Date().getFullYear())</script> Daily Match</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        function updateIcon() {
+            if (document.documentElement.classList.contains('dark')) { themeIcon.classList.replace('fa-moon', 'fa-sun'); } 
+            else { themeIcon.classList.replace('fa-sun', 'fa-moon'); }
+        }
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateIcon();
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateIcon();
+    </script>
 </body>
 </html>
