@@ -1,450 +1,400 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>جدول المباريات | Daily Match</title>
-     <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
-    <!-- أيقونات -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <!-- خط -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <title>Daily Match | تطبيق البث المباشر ومباريات اليوم</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-<style>
-/* =========================================
-   1. الأساسيات والمتغيرات
-========================================= */
-:root {
-    --bg-color: #0b0f19;
-    --card-bg: #151b2b;
-    --match-card-bg: #1e293b;
-    --text-main: #ffffff;
-    --text-muted: #94a3b8;
-    --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --highlight-color: #00ccff;
-}
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .fade-img { transition: opacity 1s ease-in-out; opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .fade-img.active { opacity: 1; position: relative; }
+        body.modal-open { overflow: hidden; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
+        
+        /* حركة تبديل الأيقونات */
+        #themeToggle i { transition: transform 0.4s ease, opacity 0.4s ease; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; outline: none; font-family: 'Cairo', sans-serif; }
-body { background-color: var(--bg-color); color: var(--text-main); direction: rtl; line-height: 1.6; overflow-x: hidden; }
-
-/* شريط التمرير */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #0b0f19; }
-::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
-
-/* =========================================
-   2. القائمة العلوية (Navbar)
-========================================= */
-.navbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 1rem 5%; background: rgba(11, 15, 25, 0.95);
-    backdrop-filter: blur(10px); border-bottom: var(--glass-border);
-    position: sticky; top: 0; z-index: 1000;
-}
-.logo {
-    font-size: 1.5rem; font-weight: 900;
-    background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    text-decoration: none;
-}
-.nav-links a {
-    color: var(--text-muted); text-decoration: none; margin-right: 20px; font-weight: 500; transition: 0.3s;
-}
-.nav-links a:hover, .nav-links a.active { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-
-/* =========================================
-   3. الحاوية والتصميم
-========================================= */
-.container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; min-height: 80vh; }
-
-.section-wrapper {
-    background: var(--card-bg); border: var(--glass-border);
-    padding: 2rem; border-radius: 16px; margin-bottom: 2rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    display: none; /* مخفي افتراضياً حتى يتم تحميل المحتوى */
-}
-
-.section-title {
-    text-align: center; color: #fff; margin-bottom: 25px;
-    position: relative; padding-bottom: 10px; font-size: 1.4rem;
-}
-.section-title::after {
-    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 50px; height: 3px; background: var(--accent-gradient); border-radius: 3px;
-}
-
-/* رسالة لا يوجد مباريات */
-.no-matches-global {
-    text-align: center; padding: 50px 20px; color: var(--text-muted);
-    background: var(--card-bg); border-radius: 16px; border: var(--glass-border);
-    display: none; /* تظهر بالجافاسكربت */
-}
-
-/* =========================================
-   4. بطاقة المباراة
-========================================= */
-.matches-grid { display: grid; gap: 15px; grid-template-columns: 1fr; }
-
-.match-card {
-    background: var(--match-card-bg); border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px; padding: 15px; position: relative; overflow: hidden;
-    transition: 0.3s;
-}
-.match-card:hover { transform: translateY(-3px); border-color: #3b82f6; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-
-/* تفاصيل الفريقين */
-.match-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
-.team-box { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.team-box img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 8px; }
-.team-name { font-size: 13px; font-weight: 700; color: #fff; }
-.center-box { width: 80px; text-align: center; }
-.score { font-size: 22px; font-weight: 900; color: var(--highlight-color); letter-spacing: 2px; }
-
-/* الحالة */
-.match-status { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 5px; }
-.status-live { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-.status-live::after { content: " ●"; animation: blink 1s infinite; }
-.status-soon { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
-.status-finished { background: rgba(148, 163, 184, 0.2); color: #94a3b8; }
-@keyframes blink { 50% { opacity: 0; } }
-
-/* الدوري */
-.league-info { text-align: center; margin-bottom: 15px; font-size: 12px; color: #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 5px; }
-.league-info img { width: 18px; height: 18px; border-radius: 50%; background: #fff; }
-
-/* الأزرار */
-.actions-row { display: flex; justify-content: center; gap: 10px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
-.btn-action {
-    display: inline-flex; align-items: center; gap: 5px; padding: 6px 14px;
-    border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;
-    text-decoration: none; transition: 0.3s; border: none; outline: none;
-}
-.btn-channels { background: rgba(255,255,255,0.08); color: #cbd5e1; }
-.btn-channels:hover { background: rgba(255,255,255,0.15); color: #fff; }
-.btn-watch { background: var(--accent-gradient); color: #fff; box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
-.btn-watch:hover { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); transform: scale(1.05); }
-
-/* قائمة القنوات */
-.channels-list { margin-top: 10px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; text-align: center; display: none; }
-.channels-list.active { display: block; animation: fadeIn 0.3s; }
-.channel-item { font-size: 11px; color: #e2e8f0; margin: 2px 0; }
-
-/* =========================================
-   5. مشغل الفيديو (MODAL / POPUP)
-========================================= */
-.video-modal {
-    display: none; position: fixed; z-index: 2000; left: 0; top: 0;
-    width: 100%; height: 100%; overflow: auto;
-    background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
-    align-items: center; justify-content: center;
-}
-.modal-content {
-    position: relative; background: #000; margin: auto; padding: 0;
-    width: 90%; max-width: 800px; aspect-ratio: 16/9;
-    border-radius: 10px; border: 1px solid #333; box-shadow: 0 0 50px rgba(59, 130, 246, 0.2);
-}
-.close-modal {
-    position: absolute; top: -35px; right: 0; color: #fff;
-    font-size: 30px; font-weight: bold; cursor: pointer; transition: 0.3s;
-}
-.close-modal:hover { color: #f44336; }
-iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
-
-/* =========================================
-   6. التجاوب والفوتر
-========================================= */
-@media (max-width: 600px) {
-    .match-row { gap: 5px; }
-    .team-box img { width: 35px; height: 35px; }
-    .team-name { font-size: 11px; }
-    .score { font-size: 18px; }
-    .nav-links { display: none; } /* يفضل عمل قائمة منسدلة للهاتف */
-}
-
-footer { text-align: center; padding: 2rem; border-top: var(--glass-border); color: var(--text-muted); background: rgba(11, 15, 25, 0.95); margin-top: auto; }
-
-  .top-alert {
-    background: #111827;
-    color: #cbd5e1;
-    text-align: center;
-    padding: 8px 0;
-    font-size: 13px;
-    font-weight: 500;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-}
-.top-alert i {
-    color: #3b82f6;
-    font-size: 18px;
-    vertical-align: middle;
-}   
-</style>
+        /* تأثير النبض للمباشر */
+        .live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            margin-left: 5px;
+            animation: pulse-red 1.5s infinite;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
 </head>
-<body>
+
+<body class="font-cairo bg-gray-50 dark:bg-darkBg text-slate-900 dark:text-slate-200 antialiased transition-colors duration-300">
 
     <!-- القائمة العلوية -->
-    <nav class="navbar">
-        <a href="index.html" class="logo">Daily Match</a>
-        <div class="nav-links">
-            <a href="index.html">الرئيسية</a>
-            <a href="matches.html" class="active">المباريات</a>
-            <a href="contact.html">اتصل بنا</a>
-            <a href="privacy.html">الخصوصية</a>
+    <nav class="fixed w-full z-50 glass-nav border-b border-gray-200 dark:border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                
+                <div class="flex items-center gap-2 sm:gap-4">
+                    <button id="mobileMenuBtn" class="md:hidden p-2 text-primary text-xl" aria-label="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="text-xl sm:text-2xl font-800 text-primary tracking-tight italic">DAILY<span class="text-slate-900 dark:text-white">MATCH</span></span>
+                </div>
+                
+                <div class="flex items-center gap-3 sm:gap-6">
+                    <button id="themeToggle" class="p-2.5 bg-gray-200 dark:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition-all hover:scale-110 active:scale-95 border border-transparent dark:border-white/5" title="تبديل الوضع">
+                        <i id="themeIcon" class="fas fa-moon text-slate-700 dark:text-yellow-400"></i>
+                    </button>
+
+                    <div class="hidden md:flex space-x-reverse space-x-8 items-center text-sm font-bold">
+                        <a href="#" class="hover:text-primary transition">الرئيسية</a>
+                        <a href="#matches" class="hover:text-primary transition">المباريات</a>
+                        <a href="#features" class="hover:text-primary transition">المميزات</a>
+                        <a href="https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file" 
+                           class="bg-primary text-white px-6 py-2.5 rounded-full hover:bg-blue-600 shadow-lg shadow-blue-500/20 transition transform hover:-translate-y-1">
+                           تحميل التطبيق
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-cardBg border-b border-gray-200 dark:border-white/5 px-6 py-6 space-y-4 shadow-xl">
+            <a href="#" class="block font-bold hover:text-primary transition">الرئيسية</a>
+            <a href="#matches" class="block font-bold hover:text-primary transition">المباريات</a>
+            <a href="#features" class="block font-bold hover:text-primary transition">المميزات</a>
+            <div class="pt-4 border-t border-gray-100 dark:border-white/10">
+                <a href="https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file" 
+                   class="block bg-primary text-center text-white py-3 rounded-xl font-bold">تحميل الآن</a>
+            </div>
         </div>
     </nav>
 
-  <!-- شريط التنبيه بالتوقيت -->
-    <div class="top-alert">
-        <i class='bx bx-time-five'></i>
-        <span>تنويه: جميع  المباريات  في الجدول أدناه بتوقيت غرينتش (GMT)</span>
-    </div>
-    
-    <!-- المحتوى الرئيسي -->
-    <div class="container">
+    <!-- قسم الهيرو (الرئيسية) -->
+    <section class="relative pt-32 pb-10 lg:pt-48 lg:pb-20 overflow-hidden">
+        <div class="absolute top-0 right-0 -z-10 w-64 sm:w-96 h-64 sm:h-96 bg-primary/20 rounded-full blur-[100px]"></div>
         
-        <!-- لودنج -->
-        <div id="loading" style="text-align:center; padding:50px; color:#3b82f6;">
-            <i class='bx bx-loader-alt bx-spin' style="font-size:40px;"></i>
-            <p style="margin-top:10px;">جاري جلب المباريات...</p>
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-12 lg:gap-12 items-center">
+                <div class="lg:col-span-7 text-center lg:text-right">
+                    <div class="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold mb-6 border border-primary/20">
+                        <span class="bg-primary text-white px-2 py-0.5 rounded-md">V5.1.0</span>
+                        <span>شاهد قنواتك المفضلة مجاناً</span>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl lg:text-7xl font-800 mb-6 leading-tight">
+                        شاهد الرياضة <br> <span class="text-primary italic font-700">بمنظور مختلف.</span>
+                    </h1>
+                    <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed max-w-2xl mx-auto lg:mr-0">
+                        تطبيق ديلي ماتش يتيح لك مشاهدة قنوات بي إن سبورت وجميع القنوات الرياضية العالمية مجاناً، مع استقرار تام وجودات متعددة.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <a href="https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file" 
+                           class="flex items-center justify-center px-8 py-4 bg-primary text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-xl shadow-blue-500/30 transform hover:-translate-y-1">
+                            <i class="fab fa-android text-2xl ml-3"></i> تحميل مجاني
+                        </a>
+                        <button onclick="openModal()" 
+                                class="flex items-center justify-center px-8 py-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl font-bold hover:border-primary transition group">
+                            <i class="fas fa-play-circle text-2xl ml-3 text-primary group-hover:scale-110 transition"></i> فيديو توضيحي
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-16 lg:mt-0 lg:col-span-5 flex justify-center lg:justify-end relative">
+                    <div class="relative w-full max-w-[240px] sm:max-w-[280px]">
+                        <div class="relative z-10 rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl border-[6px] sm:border-[8px] border-slate-900 dark:border-cardBg overflow-hidden bg-slate-900 aspect-[9/19]">
+                            <img src="https://i.postimg.cc/jSNmnyBk/Screenshot-20241015-160156.jpg" class="fade-img active" alt="Screen 1">
+                            <img src="https://i.postimg.cc/xCs4V5bq/Screenshot-20241015-160235.jpg" class="fade-img" alt="Screen 2">
+                            <img src="https://i.postimg.cc/Y9ybsSJW/Screenshot-20241015-162203.jpg" class="fade-img" alt="Screen 3">
+                        </div>
+                        <div class="absolute -inset-4 bg-primary/30 rounded-[4rem] blur-3xl -z-10"></div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- قسم كرة القدم -->
-        <div id="footballSection" class="section-wrapper">
-            <h2 class="section-title">مباريات كرة القدم</h2>
-            <div class="matches-grid" id="footballMatches"></div>
+    <!-- قسم مباريات اليوم (الجديد) -->
+    <section id="matches" class="py-16 bg-white dark:bg-black/20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-800 mb-2">أبرز <span class="text-primary">مباريات اليوم</span></h2>
+                <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
+                    <i class="far fa-clock"></i>
+                    <p>التوقيت الموضح هو توقيت جرينتش (GMT)</p>
+                </div>
+            </div>
+
+            <!-- لودنج -->
+            <div id="matchesLoading" class="flex flex-col items-center justify-center py-12">
+                <i class="fas fa-circle-notch fa-spin text-4xl text-primary mb-4"></i>
+                <p class="text-slate-500">جاري تحميل جدول المباريات...</p>
+            </div>
+
+            <!-- شبكة المباريات -->
+            <div id="matchesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- سيتم ملؤها بواسطة JS -->
+            </div>
+
+            <!-- رسالة لا يوجد مباريات -->
+            <div id="noMatchesMsg" class="hidden text-center py-12 bg-gray-50 dark:bg-cardBg rounded-2xl border border-gray-100 dark:border-white/5">
+                <i class="fas fa-calendar-times text-4xl text-slate-400 mb-3"></i>
+                <p class="text-slate-500">لا توجد مباريات هامة معروضة حالياً</p>
+            </div>
         </div>
+    </section>
 
-        <!-- قسم UFC -->
-        <div id="ufcSection" class="section-wrapper">
-            <h2 class="section-title">نزالات UFC</h2>
-            <div class="matches-grid" id="ufcMatches"></div>
+    <!-- قسم المميزات -->
+     <section id="features" class="py-20 bg-gray-100 dark:bg-darkBg">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-800 mb-4">لماذا تختار <span class="text-primary">Daily Match</span>؟</h2>
+                <p class="text-slate-500 max-w-xl mx-auto italic">نحن نقدم تجربة مشاهدة تتفوق على الجميع من حيث الجودة والسهولة.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-8 bg-white dark:bg-cardBg rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-xl transition-all group">
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-500/10 text-primary rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:rotate-12 transition-transform"><i class="fas fa-bolt"></i></div>
+                    <h3 class="text-xl font-bold mb-3">سرعة فائقة</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">سيرفراتنا مصممة لتعمل مع أضعف سرعات الإنترنت دون أي لاغ أو تقطيع أثناء المباريات الكبرى.</p>
+                </div>
+                <div class="p-8 bg-white dark:bg-cardBg rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-xl transition-all group">
+                    <div class="w-14 h-14 bg-green-100 dark:bg-green-500/10 text-green-500 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:rotate-12 transition-transform"><i class="fas fa-desktop"></i></div>
+                    <h3 class="text-xl font-bold mb-3">دعم التلفاز الذكي</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">يدعم التطبيق خاصية DLNA و Web Cast لتشغيل المحتوى مباشرة على شاشة التلفاز الخاصة بك.</p>
+                </div>
+                <div class="p-8 bg-white dark:bg-cardBg rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-xl transition-all group">
+                    <div class="w-14 h-14 bg-purple-100 dark:bg-purple-500/10 text-purple-500 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:rotate-12 transition-transform"><i class="fas fa-bell"></i></div>
+                    <h3 class="text-xl font-bold mb-3">تنبيهات المباريات</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">اشعارات فورية قبل بداية أهم المباريات العالمية لتبقى دائماً في قلب الحدث.</p>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- قسم الملاكمة -->
-        <div id="boxingSection" class="section-wrapper">
-            <h2 class="section-title">نزالات الملاكمة</h2>
-            <div class="matches-grid" id="boxingMatches"></div>
+    <!-- قسم التحميل -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto bg-primary rounded-[3rem] p-10 sm:p-16 text-center text-white relative overflow-hidden shadow-2xl shadow-blue-500/40">
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[radial-gradient(circle,white_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+            <h2 class="text-3xl sm:text-5xl font-800 mb-6">هل أنت جاهز للمشاهدة؟</h2>
+            <p class="text-blue-100 mb-10 text-lg sm:text-xl max-w-2xl mx-auto">انضم لأكثر من 100 ألف مستخدم يستمتعون بمشاهدة كرة القدم يومياً مجاناً وبدون قيود.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file" class="bg-white text-primary px-10 py-5 rounded-2xl font-800 hover:bg-blue-50 transition-all transform hover:scale-105 flex items-center shadow-lg"><i class="fab fa-android text-2xl ml-3"></i> تحميل  التطبيق</a>
+                <a href="https://t.me/DailyMatch_Apk" target="_blank" class="bg-blue-600/50 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-2xl font-800 hover:bg-blue-700 transition-all flex items-center"><i class="fab fa-telegram text-2xl ml-3"></i> تابعنا في تلغرام</a>
+            </div>
         </div>
+    </section>
 
-        <!-- رسالة لا يوجد مباريات (عامة) -->
-        <div id="globalNoMatches" class="no-matches-global">
-            <i class='bx bx-calendar-x' style="font-size: 50px; margin-bottom: 15px;"></i>
-            <h3>لا توجد مباريات أو نزالات مجدولة اليوم</h3>
-            <p>يرجى التحقق لاحقاً أو غداً</p>
+    <footer class="py-12 border-t border-gray-100 dark:border-white/5 text-center">
+        <div class="flex justify-center gap-8 mb-8">
+            <a href="https://t.me/DailyMatch_Apk" class="text-2xl text-slate-400 hover:text-primary transition"><i class="fab fa-telegram"></i></a>
+            <a href="https://www.youtube.com/@DailymatchApk/" class="text-2xl text-slate-400 hover:text-primary transition"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.tiktok.com/@dailymatchapk" class="text-2xl text-slate-400 hover:text-primary transition"><i class="fab fa-tiktok"></i></a>
         </div>
-
-    </div>
-
-    <!-- نافذة الفيديو المنبثقة -->
-    <div id="videoModal" class="video-modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeVideo()">&times;</span>
-            <iframe id="videoFrame" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2025 Daily Match. جميع الحقوق محفوظة.</p>
+        <p class="text-slate-500 font-medium">© <span id="year"></span> Daily Match - جميع الحقوق محفوظة</p>
     </footer>
 
-<!-- =========================================
-   JAVASCRIPT
-========================================= -->
-<script>
-// إعدادات الـ API
-const todayDate = new Date().toISOString().slice(0, 10);
-const time = new Date().getMinutes();
-const API_URL = `https://ws.kora-api.top/api/matches/${todayDate}?t=${time}`;
-const MAIN_URL_BASE = 'https://ws.kora-api.top/live/'; // الرابط الأساسي للمشاهدة
-const TEAM_IMG_URL = 'https://ws.kora-api.top/uploads/team/';
-const LEAGUE_IMG_URL = 'https://ws.kora-api.top/uploads/league/';
-
-// عناصر DOM
-const loadingDiv = document.getElementById("loading");
-const globalNoMatches = document.getElementById("globalNoMatches");
-
-// الدوريات المحظورة (اختياري)
-const blockedLeagues = [
-    /NBA/i, /Formula 1/i, /NFL/i, /MotoGP/i, 
-    /الدوري البرازيلي/i, /الدوري الإسكتلندي/i
-];
-
-// 1. دالة جلب البيانات
-async function fetchMatches() {
-    try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        
-        loadingDiv.style.display = "none";
-
-        if (!data || data.length === 0) {
-            showGlobalNoMatches();
-            return;
-        }
-
-        // توزيع المباريات
-        const countFootball = processMatches(data, 'football', 'footballSection', 'footballMatches');
-        const countUFC = processMatches(data, 'ufc', 'ufcSection', 'ufcMatches');
-        const countBoxing = processMatches(data, 'boxing', 'boxingSection', 'boxingMatches');
-
-        // إذا لم يتم العثور على أي مباراة في أي قسم
-        if (countFootball === 0 && countUFC === 0 && countBoxing === 0) {
-            showGlobalNoMatches();
-        }
-
-    } catch (error) {
-        console.error("Error fetching matches:", error);
-        loadingDiv.innerHTML = "<p style='color:red'>حدث خطأ في جلب المباريات. حاول تحديث الصفحة.</p>";
-    }
-}
-
-// 2. دالة معالجة وعرض المباريات لكل قسم
-function processMatches(data, sportType, sectionId, containerId) {
-    const container = document.getElementById(containerId);
-    const section = document.getElementById(sectionId);
-    
-    // فلترة البيانات
-    const matches = data.filter(match => {
-        // التحقق من الحظر
-        for (let blocked of blockedLeagues) {
-            if (match.league && (blocked.test(match.league) || blocked.test(match.league_en))) return false;
-        }
-        
-        // تصنيف حسب الرياضة
-        const isCombat = /UFC|Boxing|MMA|Fight/i.test(match.league);
-        if (sportType === 'football') return !isCombat;
-        if (sportType === 'ufc') return /UFC|MMA/i.test(match.league);
-        if (sportType === 'boxing') return /Boxing/i.test(match.league);
-        return false;
-    });
-
-    // العرض أو الإخفاء
-    if (matches.length > 0) {
-        section.style.display = "block"; // إظهار القسم
-        container.innerHTML = ""; // تنظيف
-        matches.forEach(match => createMatchCard(match, container));
-        return matches.length;
-    } else {
-        section.style.display = "none"; // إخفاء القسم بالكامل
-        return 0;
-    }
-}
-
-// 3. دالة إنشاء بطاقة المباراة HTML
-function createMatchCard(data, container) {
-    // حساب الحالة والوقت
-    let { statusClass, statusText, scoreDisplay } = getMatchStatus(data);
-    
-    // رابط البث (للاستخدام داخل الـ iframe)
-    // الهيكل عادة: url/live/id/match_id
-    const watchUrl = `${MAIN_URL_BASE}${data.id}/${data.api_matche_id}`;
-
-    // القنوات
-    let channelsHtml = data.tv ? data.tv.split(",").map(c => `<div class='channel-item'>${c}</div>`).join('') : "<div class='channel-item'>غير محدد</div>";
-
-    const card = document.createElement("div");
-    card.className = "match-card";
-    card.innerHTML = `
-        <div class="league-info">
-            <img src="${LEAGUE_IMG_URL}${data.league_logo}" onerror="this.style.display='none'">
-            <span>${data.league}</span>
+    <!-- مودال الفيديو -->
+    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/10">
+            <button onclick="closeModal()" class="absolute top-4 left-4 z-10 bg-white/10 hover:bg-red-500 text-white w-10 h-10 rounded-full transition"><i class="fas fa-times"></i></button>
+            <div class="aspect-video"><iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
         </div>
+    </div>
 
-        <div class="match-row">
-            <div class="team-box">
-                <img src="${TEAM_IMG_URL}${data.home_logo}" onerror="this.src='https://via.placeholder.com/45'">
-                <div class="team-name">${data.home}</div>
-            </div>
-            
-            <div class="center-box">
-                <div class="score">${scoreDisplay}</div>
-                <span class="match-status ${statusClass}">${statusText}</span>
-            </div>
-            
-            <div class="team-box">
-                <img src="${TEAM_IMG_URL}${data.away_logo}" onerror="this.src='https://via.placeholder.com/45'">
-                <div class="team-name">${data.away}</div>
-            </div>
-        </div>
+    <script>
+        // 1. منطق الوضع المظلم وتبديل الأيقونة
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
 
-        <div class="actions-row">
-            <button class="btn-action btn-channels" onclick="toggleChannels(this)">
-                <i class='bx bx-tv'></i> القنوات
-            </button>
-            <button class="btn-action btn-watch" onclick="openVideo('${watchUrl}')">
-                <i class='bx bx-play-circle'></i> مشاهدة
-            </button>
-        </div>
-        <div class="channels-list">${channelsHtml}</div>
-    `;
-    container.appendChild(card);
-}
-
-// 4. دالة مساعدة لحالة المباراة
-function getMatchStatus(data) {
-    let statusClass = "status-soon", statusText = "لم تبدأ", scoreDisplay = "";
-    
-    if (data.status == 1) { // مباشر
-        statusClass = "status-live"; statusText = "مباشر";
-        scoreDisplay = data.score || "0 - 0";
-    } else if (data.status == 2) { // انتهت
-        statusClass = "status-finished"; statusText = "انتهت";
-        scoreDisplay = data.score || "-";
-    } else { // لم تبدأ
-        // تحسين عرض الوقت (إضافة ساعة +1 أو حسب التوقيت المحلي)
-        if (data.time) {
-            let [h, m] = data.time.split(":");
-            // هنا يمكنك تعديل التوقيت حسب الحاجة. الكود أدناه يعرضه كما هو من المصدر
-            scoreDisplay = `${h}:${m}`; 
+        function updateIcon() {
+            if (document.documentElement.classList.contains('dark')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
         }
-    }
-    return { statusClass, statusText, scoreDisplay };
-}
 
-// 5. وظائف واجهة المستخدم (فيديو + قنوات)
-function toggleChannels(btn) {
-    const list = btn.parentElement.nextElementSibling;
-    const allLists = document.querySelectorAll('.channels-list');
-    
-    // إغلاق القوائم الأخرى
-    allLists.forEach(l => {
-        if(l !== list) l.classList.remove('active');
-    });
-    
-    list.classList.toggle("active");
-}
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateIcon();
+        });
 
-function showGlobalNoMatches() {
-    globalNoMatches.style.display = "block";
-}
+        // تشغيل الوضع الافتراضي المخزن
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateIcon();
 
-// --- التعامل مع الفيديو (Embed) ---
-const videoModal = document.getElementById("videoModal");
-const videoFrame = document.getElementById("videoFrame");
+        // 2. قائمة الجوال
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.onclick = () => mobileMenu.classList.toggle('hidden');
 
-function openVideo(url) {
-    videoFrame.src = url;
-    videoModal.style.display = "flex";
-}
+        // 3. السلايدر
+        let currentIdx = 0;
+        const slides = document.querySelectorAll('.fade-img');
+        setInterval(() => {
+            slides[currentIdx].classList.remove('active');
+            currentIdx = (currentIdx + 1) % slides.length;
+            slides[currentIdx].classList.add('active');
+        }, 3000);
 
-function closeVideo() {
-    videoModal.style.display = "none";
-    videoFrame.src = ""; // إيقاف الفيديو
-}
+        // 4. المودال
+        function openModal() {
+            document.getElementById('videoModal').classList.replace('hidden', 'flex');
+            document.getElementById('videoIframe').src = ""; // هنا ضع رابط الفيديو التوضيحي إن وجد
+            document.body.classList.add('modal-open');
+        }
+        function closeModal() {
+            document.getElementById('videoModal').classList.replace('flex', 'hidden');
+            document.getElementById('videoIframe').src = "";
+            document.body.classList.remove('modal-open');
+        }
 
-// إغلاق النافذة عند النقر خارجها
-window.onclick = function(event) {
-    if (event.target == videoModal) {
-        closeVideo();
-    }
-}
+        document.getElementById('year').innerText = new Date().getFullYear();
 
-// بدء التنفيذ
-document.addEventListener('DOMContentLoaded', fetchMatches);
-</script>
+        // 5. جلب المباريات API
+        const matchesGrid = document.getElementById('matchesGrid');
+        const matchesLoading = document.getElementById('matchesLoading');
+        const noMatchesMsg = document.getElementById('noMatchesMsg');
 
+        const todayDate = new Date().toISOString().slice(0, 10);
+        const time = new Date().getMinutes();
+        const API_URL = `https://ws.kora-api.top/api/matches/${todayDate}?t=${time}`;
+        const TEAM_IMG_URL = 'https://ws.kora-api.top/uploads/team/';
+        const LEAGUE_IMG_URL = 'https://ws.kora-api.top/uploads/league/';
+        const blockedLeagues = [/NBA/i, /Formula 1/i, /NFL/i, /MotoGP/i];
+
+        async function fetchMatches() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                matchesLoading.style.display = 'none';
+
+                if (!data || data.length === 0) {
+                    noMatchesMsg.classList.remove('hidden');
+                    return;
+                }
+
+                // تصفية المباريات (استبعاد المحظورة والملاكمة/UFC لتركيز العرض على الكرة في هذا القسم)
+                // إذا أردت عرض كل شيء، فقط أزل الفلتر الثاني
+                const filteredMatches = data.filter(match => {
+                    for (let blocked of blockedLeagues) {
+                        if (match.league && (blocked.test(match.league) || blocked.test(match.league_en))) return false;
+                    }
+                    return true;
+                });
+
+                if(filteredMatches.length === 0) {
+                    noMatchesMsg.classList.remove('hidden');
+                    return;
+                }
+
+                matchesGrid.classList.remove('hidden');
+
+                filteredMatches.forEach(match => {
+                    const card = createMatchHTML(match);
+                    matchesGrid.innerHTML += card;
+                });
+
+            } catch (error) {
+                console.error("Error fetching matches:", error);
+                matchesLoading.innerHTML = "<p class='text-red-500'>حدث خطأ في جلب المباريات.</p>";
+            }
+        }
+
+        function createMatchHTML(data) {
+            let statusText = "لم تبدأ";
+            let statusClass = "bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400";
+            let scoreDisplay = data.time || "-:-"; // الوقت الافتراضي
+
+            if (data.status == 1) { // مباشر
+                statusText = `مباشر <span class="live-dot"></span>`;
+                statusClass = "bg-red-100 text-red-600 dark:bg-red-500/10 dark:text-red-400";
+                scoreDisplay = data.score || "0 - 0";
+            } else if (data.status == 2) { // انتهت
+                statusText = "انتهت";
+                statusClass = "bg-gray-200 text-gray-500 dark:bg-white/5 dark:text-gray-400";
+                scoreDisplay = data.score || "-";
+            } else {
+                // محاولة تحسين عرض الوقت
+                 if (data.time) {
+                    // الوقت يأتي من ال API عادة، نعرضه كما هو
+                    scoreDisplay = data.time;
+                 }
+            }
+
+            // التعامل مع الصور المكسورة
+            const homeLogo = data.home_logo ? `${TEAM_IMG_URL}${data.home_logo}` : 'https://via.placeholder.com/45?text=H';
+            const awayLogo = data.away_logo ? `${TEAM_IMG_URL}${data.away_logo}` : 'https://via.placeholder.com/45?text=A';
+            const leagueLogo = data.league_logo ? `${LEAGUE_IMG_URL}${data.league_logo}` : '';
+
+            return `
+                <div class="bg-gray-50 dark:bg-cardBg p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-md transition duration-300 relative group">
+                    <!-- معلومات الدوري -->
+                    <div class="flex items-center justify-center gap-2 mb-6 opacity-70 group-hover:opacity-100 transition">
+                        <img src="${leagueLogo}" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-400 truncate max-w-[200px]">${data.league}</span>
+                    </div>
+
+                    <!-- تفاصيل الفريقين والنتيجة -->
+                    <div class="flex items-center justify-between">
+                        <!-- الفريق المضيف -->
+                        <div class="flex flex-col items-center w-1/3">
+                            <img src="${homeLogo}" class="w-12 h-12 mb-3 object-contain drop-shadow-md" onerror="this.src='https://via.placeholder.com/45'">
+                            <span class="text-xs font-bold text-center text-slate-800 dark:text-slate-200 line-clamp-2 h-8 leading-tight flex items-center justify-center">${data.home}</span>
+                        </div>
+
+                        <!-- النتيجة والوقت -->
+                        <div class="flex flex-col items-center w-1/3 relative z-10">
+                            <span class="text-2xl font-800 tracking-widest text-slate-900 dark:text-white mb-2 font-[arial]">${scoreDisplay}</span>
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold border border-transparent ${statusClass} flex items-center">
+                                ${statusText}
+                            </span>
+                        </div>
+
+                        <!-- الفريق الضيف -->
+                        <div class="flex flex-col items-center w-1/3">
+                            <img src="${awayLogo}" class="w-12 h-12 mb-3 object-contain drop-shadow-md" onerror="this.src='https://via.placeholder.com/45'">
+                            <span class="text-xs font-bold text-center text-slate-800 dark:text-slate-200 line-clamp-2 h-8 leading-tight flex items-center justify-center">${data.away}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // تشغيل جلب المباريات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', fetchMatches);
+
+    </script>
 </body>
 </html>
