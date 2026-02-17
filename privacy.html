@@ -1,42 +1,95 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سياسة الخصوصية | Daily Match</title>
-     <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: '#3b82f6', darkBg: '#0f172a', cardBg: '#1e293b' }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } }
+        }
+    </script>
+    <style>
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
+    </style>
 </head>
-<body>
-    <nav class="navbar">
-        <a href="index.html" class="logo">Daily Match</a>
-        <div class="nav-links">
-            <a href="index.html">الرئيسية</a>
-            <a href="privacy.html" class="active">الخصوصية</a>
+<body class="font-cairo bg-gray-50 dark:bg-darkBg text-slate-900 dark:text-slate-200 antialiased transition-colors duration-300 flex flex-col min-h-screen">
+
+    <!-- القائمة العلوية -->
+    <nav class="fixed w-full z-50 glass-nav border-b border-gray-200 dark:border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <a href="index.html" class="text-xl sm:text-2xl font-800 text-primary tracking-tight italic">DAILY<span class="text-slate-900 dark:text-white">MATCH</span></a>
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" class="p-2.5 bg-gray-200 dark:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition hover:scale-110"><i id="themeIcon" class="fas fa-moon"></i></button>
+                    <a href="index.html" class="bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-bold hover:bg-primary hover:text-white transition">العودة للرئيسية</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <div class="container">
-        <div class="card">
-            <h1>سياسة الخصوصية</h1>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">آخر تحديث: أكتوبر 2025</p>
+    <!-- المحتوى -->
+    <main class="flex-grow pt-32 pb-20 px-6">
+        <div class="max-w-4xl mx-auto bg-white dark:bg-cardBg rounded-[2rem] p-8 sm:p-12 shadow-xl border border-gray-100 dark:border-white/5">
+            <h1 class="text-3xl sm:text-4xl font-800 mb-8 border-b border-gray-100 dark:border-white/10 pb-6">سياسة الخصوصية</h1>
             
-            <h3>1. مقدمة</h3>
-            <p style="margin-bottom: 15px;">نحن في Daily Match نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. توضح هذه السياسة كيفية تعاملنا مع البيانات عند استخدامك لتطبيقنا وموقعنا.</p>
-            
-            <h3>2. البيانات </h3>
-            <p style="margin-bottom: 15px;">نحن لا نجمع أي بيانات شخصية (مثل الاسم أو العنوان) من المستخدمين بشكل مباشر. قد يقوم التطبيق بجمع بيانات تقنية مجهولة (مثل نوع الجهاز وإصدار النظام) لتحسين الأداء وإصلاح الأخطاء.</p>
-            
-            <h3>3. الإعلانات</h3>
-            <p style="margin-bottom: 15px;">قد يستخدم التطبيق خدمات إعلانية تابعة لجهات خارجية (مثل Google AdMob) لعرض الإعلانات. قد تستخدم هذه الشركات ملفات تعريف الارتباط (Cookies) لجمع معلومات حول زياراتك لهذا التطبيق وغيره من المواقع لتقديم إعلانات حول السلع والخدمات التي تهمك.</p>
-            
-            <h3>4. الروابط الخارجية</h3>
-            <p style="margin-bottom: 15px;">قد يحتوي تطبيقنا على روابط لمواقع أخرى. نحن لسنا مسؤولين عن ممارسات الخصوصية أو محتوى تلك المواقع.</p>
-            
-            <h3>5. اتصل بنا</h3>
-            <p>إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا عبر البريد الإلكتروني: dailymatchapk@gmail.com</p>
+            <div class="space-y-8 text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">1. مقدمة</h2>
+                    <p>نحن في Daily Match نولي اهتماماً كبيراً لخصوصية زوارنا ومستخدمي تطبيقنا. توضح هذه الوثيقة أنواع المعلومات التي نجمعها وكيفية استخدامها.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">2. المعلومات التي نجمعها</h2>
+                    <p>نحن لا نطلب منك التسجيل لاستخدام التطبيق. قد نقوم بجمع معلومات تقنية غير شخصية مثل نوع الجهاز، ونظام التشغيل، وعنوان الـ IP لتحسين أداء السيرفرات وجودة البث.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">3. ملفات تعريف الارتباط (Cookies)</h2>
+                    <p>قد يستخدم التطبيق أو الموقع ملفات تعريف الارتباط لتحسين تجربة المستخدم، مثل حفظ تفضيلات الوضع الليلي/النهاري.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">4. روابط الطرف الثالث</h2>
+                    <p>قد يحتوي تطبيقنا على روابط لمواقع أخرى (مثل قنوات البث). نحن غير مسؤولين عن ممارسات الخصوصية لتلك المواقع.</p>
+                </div>
+                
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-3">5. اتصل بنا</h2>
+                    <p>إذا كان لديك أي استفسارات حول سياسة الخصوصية، يرجى التواصل معنا عبر صفحة <a href="contact.html" class="text-primary hover:underline">اتصل بنا</a>.</p>
+                </div>
+            </div>
         </div>
-    </div>
-    
-    <footer><p>&copy; 2025 Daily Match.</p></footer>
+    </main>
+
+    <!-- الفوتر -->
+    <footer class="py-8 border-t border-gray-200 dark:border-white/5 bg-white/50 dark:bg-black/20 text-center">
+        <p class="text-slate-500 text-sm font-medium">© <script>document.write(new Date().getFullYear())</script> Daily Match</p>
+    </footer>
+
+    <script>
+        // كود الوضع الليلي المشترك
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        function updateIcon() {
+            if (document.documentElement.classList.contains('dark')) { themeIcon.classList.replace('fa-moon', 'fa-sun'); } 
+            else { themeIcon.classList.replace('fa-sun', 'fa-moon'); }
+        }
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateIcon();
+        });
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateIcon();
+    </script>
 </body>
 </html>
