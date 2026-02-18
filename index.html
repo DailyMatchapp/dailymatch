@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-cardBg border-b border-gray-200 dark:border-white/5 px-6 py-6 space-y-4 shadow-xl">
+       <div id="mobileMenu" class="hidden md:hidden absolute top-20 left-0 w-full z-40 bg-white dark:bg-cardBg border-b border-gray-200 dark:border-white/5 px-6 py-6 space-y-4 shadow-xl ring-1 ring-black/5">
             <a href="#" class="block font-bold hover:text-primary transition">الرئيسية</a>
             <a href="#matches" class="block font-bold hover:text-primary transition">المباريات</a>
             <a href="#features" class="block font-bold hover:text-primary transition">المميزات</a>
@@ -269,10 +269,45 @@
         }
         updateIcon();
 
-        // 2. قائمة الجوال
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.onclick = () => mobileMenu.classList.toggle('hidden');
+       // 2. مطور قائمة الجوال
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuIcon = mobileMenuBtn.querySelector('i');
+
+// وظيفة تبديل القائمة
+function toggleMenu() {
+    const isHidden = mobileMenu.classList.toggle('hidden');
+    
+    // تغيير الأيقونة بين القائمة والإغلاق
+    if (isHidden) {
+        menuIcon.classList.replace('fa-times', 'fa-bars');
+    } else {
+        menuIcon.classList.replace('fa-bars', 'fa-times');
+    }
+}
+
+// فتح/إغلاق عند النقر على الزر
+mobileMenuBtn.onclick = (e) => {
+    e.stopPropagation(); // منع النقر من الانتشار للخلفية
+    toggleMenu();
+};
+
+// إغلاق القائمة عند النقر على أي رابط بداخلها
+mobileMenu.querySelectorAll('a').forEach(link => {
+    link.onclick = () => {
+        if (!mobileMenu.classList.contains('hidden')) toggleMenu();
+    };
+});
+
+// إغلاق القائمة عند النقر في أي مكان خارجها
+document.addEventListener('click', (event) => {
+    const isClickInsideMenu = mobileMenu.contains(event.target);
+    const isClickOnBtn = mobileMenuBtn.contains(event.target);
+
+    if (!mobileMenu.classList.contains('hidden') && !isClickInsideMenu && !isClickOnBtn) {
+        toggleMenu();
+    }
+});
 
         // 3. السلايدر
         let currentIdx = 0;
