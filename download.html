@@ -64,33 +64,55 @@
     <main class="pt-32 pb-20 px-6">
         <div class="max-w-4xl mx-auto">
             
-            <!-- قسم العداد الرئيسي -->
-            <div class="bg-white dark:bg-cardBg rounded-[2.5rem] p-8 sm:p-12 shadow-xl shadow-blue-500/5 border border-gray-100 dark:border-white/5 text-center mb-12">
-                <div class="inline-flex items-center justify-center relative mb-8">
-                    <!-- حلقة التقدم -->
-                    <svg class="w-32 h-32 sm:w-40 sm:h-40">
-                        <circle class="text-gray-200 dark:text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
-                        <circle id="progressBar" class="text-primary transition-all duration-1000 ease-linear" stroke-width="8" stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke-linecap="round" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
-                    </svg>
-                    <!-- الرقم في المنتصف -->
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="countdownText" class="text-4xl sm:text-5xl font-800 text-primary">15</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ثانية</span>
-                    </div>
-                </div>
+           <!-- قسم العداد الرئيسي المصحح -->
+<div class="bg-white dark:bg-cardBg rounded-[2.5rem] p-8 sm:p-12 shadow-xl shadow-blue-500/5 border border-gray-100 dark:border-white/5 text-center mb-12">
+    
+    <!-- حاوية العداد -->
+    <div class="relative inline-flex items-center justify-center mb-8">
+        <!-- SVG الدائرة -->
+        <svg class="w-32 h-32 sm:w-40 sm:h-40 transform -rotate-90" viewBox="0 0 120 120">
+            <!-- الدائرة الخلفية الرمادية -->
+            <circle 
+                cx="60" cy="60" r="54" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="8" 
+                class="text-gray-200 dark:text-gray-700"
+            />
+            <!-- دائرة التقدم الملونة -->
+            <circle 
+                id="progressBar"
+                cx="60" cy="60" r="54" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="8" 
+                stroke-linecap="round"
+                stroke-dasharray="339.29" 
+                stroke-dashoffset="339.29"
+                class="text-primary transition-all duration-1000 ease-linear"
+            />
+        </svg>
 
-                <h1 class="text-2xl sm:text-3xl font-800 mb-4">جاري تجهيز ملف التحميل...</h1>
-                <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
-                    من فضلك انتظر قليلاً، نقوم الآن بفحص الملف للتأكد من أمانه وتوفير أسرع سيرفر للتحميل.
-                </p>
+        <!-- الرقم في منتصف الدائرة تماماً -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="countdownText" class="text-4xl sm:text-5xl font-800 text-primary leading-none">15</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ثانية</span>
+        </div>
+    </div>
 
-                <!-- زر تحميل يدوي (يظهر لاحقاً) -->
-                <div id="downloadAction" class="mt-10 hidden animate-bounce">
-                    <a href="رابط_التحميل_هنا.apk" class="bg-primary text-white px-10 py-4 rounded-2xl font-800 hover:bg-blue-600 transition shadow-lg shadow-blue-500/30 flex items-center justify-center inline-flex">
-                        <i class="fas fa-download ml-3"></i> اضغط هنا إذا لم يبدأ التحميل
-                    </a>
-                </div>
-            </div>
+    <h1 class="text-2xl sm:text-3xl font-800 mb-4">جاري تجهيز ملف التحميل...</h1>
+    <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+        من فضلك انتظر قليلاً، نقوم الآن بفحص الملفات لتوفير أسرع سيرفر للتحميل.
+    </p>
+
+    <!-- زر تحميل يدوي -->
+    <div id="downloadAction" class="mt-10 hidden animate-bounce">
+        <a href="https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file" 
+           class="bg-primary text-white px-10 py-4 rounded-2xl font-800 hover:bg-blue-600 transition shadow-lg shadow-blue-500/30 flex items-center justify-center inline-flex">
+            <i class="fas fa-download ml-3"></i> اضغط هنا لبدء التحميل
+        </a>
+    </div>
+</div>
 
             <!-- قسم المحتوى الطويل (للاحترافية و SEO) -->
             <div class="grid lg:grid-cols-3 gap-8">
@@ -191,33 +213,40 @@
         updateIcon();
 
         // 2. منطق العداد والتقدم
-        let timeLeft = 15;
-        const countdownText = document.getElementById('countdownText');
-        const progressBar = document.getElementById('progressBar');
-        const downloadAction = document.getElementById('downloadAction');
+       // 2. منطق العداد والتقدم (المحدث)
+let timeLeft = 15;
+const countdownText = document.getElementById('countdownText');
+const progressBar = document.getElementById('progressBar');
+const downloadAction = document.getElementById('downloadAction');
+
+// محيط الدائرة الجديد r=54 هو (2 * 3.14159 * 54) = 339.29
+const totalDash = 339.29; 
+const downloadUrl = "https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file";
+
+const timer = setInterval(() => {
+    timeLeft--;
+    
+    // تحديث النص (إذا وصل للصفر نضع أيقونة صح)
+    if (timeLeft >= 0) {
+        countdownText.innerText = timeLeft;
+    }
+    
+    // تحديث الدائرة (التقدم)
+    const progress = (15 - timeLeft) / 15;
+    const offset = totalDash - (progress * totalDash);
+    progressBar.style.strokeDashoffset = offset;
+
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        countdownText.innerHTML = '<i class="fas fa-check"></i>';
+        downloadAction.classList.remove('hidden');
         
-        const totalDash = 364.4; // محيط الدائرة (2 * PI * r)
-        const downloadUrl = "https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file";
-
-        const timer = setInterval(() => {
-            timeLeft--;
-            countdownText.innerText = timeLeft;
-            
-            // تحديث الدائرة
-            const offset = totalDash - ((15 - timeLeft) / 15) * totalDash;
-            progressBar.style.strokeDashoffset = offset;
-
-            if (timeLeft <= 0) {
-                clearInterval(timer);
-                countdownText.innerHTML = '<i class="fas fa-check"></i>';
-                downloadAction.classList.remove('hidden');
-                
-                // التوجيه التلقائي بعد ثانية واحدة من انتهاء العداد
-                setTimeout(() => {
-                    window.location.href = downloadUrl;
-                }, 1000);
-            }
+        // التوجيه التلقائي
+        setTimeout(() => {
+            window.location.href = downloadUrl;
         }, 1000);
+    }
+}, 1000);
 
         document.getElementById('year').innerText = new Date().getFullYear();
     </script>
