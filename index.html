@@ -258,11 +258,31 @@
     <p class="text-slate-500 text-sm font-medium">© <span id="year"></span> Daily Match - جميع الحقوق محفوظة</p>
 </footer>
 
-    <!-- مودال الفيديو -->
-    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4">
-        <div class="relative w-full max-w-4xl bg-black rounded-3xl overflow-hidden border border-white/10">
-            <button onclick="closeModal()" class="absolute top-4 left-4 z-10 bg-white/10 hover:bg-red-500 text-white w-10 h-10 rounded-full transition"><i class="fas fa-times"></i></button>
-            <div class="aspect-video"><iframe id="videoIframe" class="w-full h-full" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+   <!-- مودال الفيديو (يوتيوب) -->
+    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm">
+        
+        <!-- حاوية الفيديو -->
+        <div class="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/10">
+            
+            <!-- زر الإغلاق (تم نقله لليمين) -->
+            <button onclick="closeModal()" 
+                    class="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 hover:scale-110 transition-all duration-300 border border-white/20 backdrop-blur-md group"
+                    title="إغلاق">
+                <i class="fas fa-times text-lg group-hover:rotate-90 transition-transform duration-300"></i>
+            </button>
+            
+            <!-- مشغل اليوتيوب -->
+            <div class="aspect-video w-full bg-black">
+                <iframe id="videoIframe" 
+                        class="w-full h-full" 
+                        src="" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                </iframe>
+            </div>
         </div>
     </div>
 
@@ -341,15 +361,30 @@ document.addEventListener('click', (event) => {
             slides[currentIdx].classList.add('active');
         }, 3000);
 
-        // 4. المودال
-        function openModal() {
-            document.getElementById('videoModal').classList.replace('hidden', 'flex');
-            document.getElementById('videoIframe').src = ""; // هنا ضع رابط الفيديو التوضيحي إن وجد
+      // 4. المودال
+      function openModal() {
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoIframe');
+            
+            // رابط الفيديو (غير هذا الرابط برابط الفيديو الخاص بك)
+            // ملاحظة: تأكد من أن الرابط يحتوي على /embed/ وليس /watch?v=
+            const videoUrl = "https://www.youtube.com/embed/5JAKo2MpPkg?si=3qEZ64HPbOwo_NJD"; 
+            
+            modal.classList.replace('hidden', 'flex');
+            // تأخير بسيط لتحسين تجربة التحميل
+            setTimeout(() => {
+                iframe.src = videoUrl;
+            }, 100);
+            
             document.body.classList.add('modal-open');
         }
+
         function closeModal() {
-            document.getElementById('videoModal').classList.replace('flex', 'hidden');
-            document.getElementById('videoIframe').src = "";
+            const modal = document.getElementById('videoModal');
+            const iframe = document.getElementById('videoIframe');
+            
+            modal.classList.replace('flex', 'hidden');
+            iframe.src = ""; // إفراغ المصدر لإيقاف الصوت والفيديو فوراً
             document.body.classList.remove('modal-open');
         }
 
