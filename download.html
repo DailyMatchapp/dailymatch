@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جاري تحضير رابط التحميل | Daily Match</title>
+    <link rel="icon" type="image/png" href="https://i.ibb.co/KzXmmxST/channels4-profile.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body.modal-open { overflow: hidden; }
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
+        
+        .progress-ring { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        .animate-soft { animation: pulse-soft 2s infinite; }
+    </style>
+</head>
+
+<body class="font-cairo bg-gray-50 dark:bg-darkBg text-slate-900 dark:text-slate-200 antialiased transition-colors duration-300">
+
+    <!-- القائمة العلوية (نفس التصميم الأصلي) -->
+    <nav class="fixed w-full z-50 glass-nav border-b border-gray-200 dark:border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-2">
+                   <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+                        <span class="text-xl sm:text-2xl font-800 text-primary tracking-tight italic">
+                            DAILY <span class="text-slate-900 dark:text-white">MATCH</span>
+                        </span>
+                    </a>
+                </div>
+                <button id="themeToggle" class="p-2.5 bg-gray-200 dark:bg-white/10 rounded-full w-10 h-10 flex items-center justify-center transition-all border border-transparent dark:border-white/5">
+                    <i id="themeIcon" class="fas fa-moon text-slate-700 dark:text-yellow-400"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوى صفحة الانتظار -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- قسم العداد الرئيسي -->
+            <div class="bg-white dark:bg-cardBg rounded-[2.5rem] p-8 sm:p-12 shadow-xl shadow-blue-500/5 border border-gray-100 dark:border-white/5 text-center mb-12">
+                <div class="inline-flex items-center justify-center relative mb-8">
+                    <!-- حلقة التقدم -->
+                    <svg class="w-32 h-32 sm:w-40 sm:h-40">
+                        <circle class="text-gray-200 dark:text-gray-700" stroke-width="8" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
+                        <circle id="progressBar" class="text-primary transition-all duration-1000 ease-linear" stroke-width="8" stroke-dasharray="364.4" stroke-dashoffset="364.4" stroke-linecap="round" stroke="currentColor" fill="transparent" r="58" cx="64" cy="64" />
+                    </svg>
+                    <!-- الرقم في المنتصف -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="countdownText" class="text-4xl sm:text-5xl font-800 text-primary">15</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ثانية</span>
+                    </div>
+                </div>
+
+                <h1 class="text-2xl sm:text-3xl font-800 mb-4">جاري تجهيز ملف التحميل...</h1>
+                <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed">
+                    من فضلك انتظر قليلاً، نقوم الآن بفحص الملف للتأكد من أمانه وتوفير أسرع سيرفر للتحميل.
+                </p>
+
+                <!-- زر تحميل يدوي (يظهر لاحقاً) -->
+                <div id="downloadAction" class="mt-10 hidden animate-bounce">
+                    <a href="رابط_التحميل_هنا.apk" class="bg-primary text-white px-10 py-4 rounded-2xl font-800 hover:bg-blue-600 transition shadow-lg shadow-blue-500/30 flex items-center justify-center inline-flex">
+                        <i class="fas fa-download ml-3"></i> اضغط هنا إذا لم يبدأ التحميل
+                    </a>
+                </div>
+            </div>
+
+            <!-- قسم المحتوى الطويل (للاحترافية و SEO) -->
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- تعليمات التثبيت -->
+                <div class="lg:col-span-2 space-y-8">
+                    <section class="bg-white dark:bg-cardBg/50 p-8 rounded-[2rem] border border-gray-100 dark:border-white/5">
+                        <h2 class="text-xl font-800 mb-6 flex items-center gap-3">
+                            <i class="fas fa-info-circle text-primary"></i>
+                            كيفية تثبيت تطبيق Daily Match
+                        </h2>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 shrink-0 bg-blue-100 dark:bg-blue-500/10 text-primary rounded-xl flex items-center justify-center font-bold">1</div>
+                                <div>
+                                    <h3 class="font-bold mb-1">تحميل ملف APK</h3>
+                                    <p class="text-sm text-slate-500 leading-relaxed">بعد انتهاء العداد، سيبدأ تحميل ملف Daily_Match_V5.1.apk مباشرة على جهازك.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 shrink-0 bg-blue-100 dark:bg-blue-500/10 text-primary rounded-xl flex items-center justify-center font-bold">2</div>
+                                <div>
+                                    <h3 class="font-bold mb-1">السماح بمصادر غير معروفة</h3>
+                                    <p class="text-sm text-slate-500 leading-relaxed">إذا كانت هذه المرة الأولى لك، سيطلب منك الهاتف الإذن لتثبيت تطبيقات من خارج المتجر. توجه إلى الإعدادات وقم بتفعيل "السماح من هذا المصدر".</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 shrink-0 bg-blue-100 dark:bg-blue-500/10 text-primary rounded-xl flex items-center justify-center font-bold">3</div>
+                                <div>
+                                    <h3 class="font-bold mb-1">استمتع بالمشاهدة</h3>
+                                    <p class="text-sm text-slate-500 leading-relaxed">افتح التطبيق، اختر جودة البث المناسبة لإنترنتك، وابدأ بمتابعة مباريات اليوم مباشرة.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="bg-blue-50 dark:bg-primary/5 p-8 rounded-[2rem] border border-blue-100 dark:border-primary/10">
+                        <h2 class="text-lg font-800 mb-4 flex items-center gap-3 text-blue-700 dark:text-blue-400">
+                            <i class="fas fa-shield-halved"></i>
+                            تنبيه الأمان
+                        </h2>
+                        <p class="text-sm text-blue-600/80 dark:text-blue-400/80 leading-relaxed font-medium">
+                            جميع ملفاتنا تخضع للفحص الدوري عبر Microsoft Defender و VirusTotal. تأكد دائماً أنك تقوم بتحميل التطبيق من موقعنا الرسمي لتجنب النسخ المقلدة التي قد تحتوي على إعلانات مزعجة.
+                        </p>
+                    </section>
+                </div>
+
+                <!-- مميزات سريعة -->
+                <div class="space-y-6">
+                    <div class="bg-white dark:bg-cardBg/50 p-6 rounded-[2rem] border border-gray-100 dark:border-white/5">
+                        <div class="text-primary text-2xl mb-4"><i class="fas fa-bolt"></i></div>
+                        <h3 class="font-bold mb-2">سرعة فائقة</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">توفير سيرفرات تحميل مباشرة تدعم استكمال التحميل في أي وقت.</p>
+                    </div>
+                    <div class="bg-white dark:bg-cardBg/50 p-6 rounded-[2rem] border border-gray-100 dark:border-white/5">
+                        <div class="text-green-500 text-2xl mb-4"><i class="fas fa-mobile-screen"></i></div>
+                        <h3 class="font-bold mb-2">متوافق مع الجميع</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">يعمل التطبيق على جميع هواتف أندرويد ابتداءً من إصدار 5.0 وما فوق.</p>
+                    </div>
+                    <div class="bg-white dark:bg-cardBg/50 p-6 rounded-[2rem] border border-gray-100 dark:border-white/5">
+                        <div class="text-purple-500 text-2xl mb-4"><i class="fas fa-tv"></i></div>
+                        <h3 class="font-bold mb-2">دعم Android TV</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed">يمكنك تثبيت النسخة نفسها على شاشات الأندرويد و TV Box بسهولة.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-200 dark:border-white/5 text-center">
+        <p class="text-slate-500 text-sm">© <span id="year"></span> Daily Match - جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script>
+        // 1. منطق الثيم (الوضع المظلم)
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+
+        function updateIcon() {
+            if (document.documentElement.classList.contains('dark')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateIcon();
+        });
+
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateIcon();
+
+        // 2. منطق العداد والتقدم
+        let timeLeft = 15;
+        const countdownText = document.getElementById('countdownText');
+        const progressBar = document.getElementById('progressBar');
+        const downloadAction = document.getElementById('downloadAction');
+        
+        const totalDash = 364.4; // محيط الدائرة (2 * PI * r)
+        const downloadUrl = "https://www.mediafire.com/file/evu0domxttqottb/Daily_Match_5.1.apk/file";
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            countdownText.innerText = timeLeft;
+            
+            // تحديث الدائرة
+            const offset = totalDash - ((15 - timeLeft) / 15) * totalDash;
+            progressBar.style.strokeDashoffset = offset;
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                countdownText.innerHTML = '<i class="fas fa-check"></i>';
+                downloadAction.classList.remove('hidden');
+                
+                // التوجيه التلقائي بعد ثانية واحدة من انتهاء العداد
+                setTimeout(() => {
+                    window.location.href = downloadUrl;
+                }, 1000);
+            }
+        }, 1000);
+
+        document.getElementById('year').innerText = new Date().getFullYear();
+    </script>
+</body>
+</html>
