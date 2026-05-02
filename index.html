@@ -468,7 +468,9 @@ document.addEventListener('click', (event) => {
             const leagueLogo = data.league_logo ? `${LEAGUE_IMG_URL}${data.league_logo}` : '';
 
             return `
-                <div class="bg-gray-50 dark:bg-cardBg p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-md transition duration-300 relative group">
+                <div class="bg-gray-50 dark:bg-cardBg p-5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm hover:shadow-md transition duration-300 relative dark:hover:bg-slate-800 
+                dark:hover:shadow-[0_0_25px_rgba(59,130,246,0.2)] 
+                dark:hover:border-primary/50 group">
                     <!-- معلومات الدوري -->
                     <div class="flex items-center justify-center gap-2 mb-6 opacity-70 group-hover:opacity-100 transition">
                         <img src="${leagueLogo}" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
