@@ -286,6 +286,23 @@
         </div>
     </div>
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <!-- زر العودة للأعلى -->
+<button id="backToTop" 
+        class="fixed bottom-8 right-8 z-[60] w-12 h-12 bg-primary text-white rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center opacity-0 invisible transition-all duration-500 hover:bg-blue-600 hover:scale-110 active:scale-90 transform translate-y-10 border border-white/10"
+        aria-label="العودة للأعلى">
+    <i class="fas fa-arrow-up text-lg"></i>
+</button>
+  
     <script>
         // 1. منطق الوضع المظلم وتبديل الأيقونة
         const themeToggle = document.getElementById('themeToggle');
@@ -506,6 +523,43 @@ document.addEventListener('click', (event) => {
         // تشغيل جلب المباريات عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', fetchMatches);
 
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      // منطق زر العودة إلى الأعلى
+const backToTopBtn = document.getElementById('backToTop');
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+        // إظهار الزر مع حركة دخول
+        backToTopBtn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
+        backToTopBtn.classList.add('opacity-100', 'visible', 'translate-y-0');
+    } else {
+        // إخفاء الزر مع حركة خروج
+        backToTopBtn.classList.add('opacity-0', 'invisible', 'translate-y-10');
+        backToTopBtn.classList.remove('opacity-100', 'visible', 'translate-y-0');
+    }
+});
+
+// عند النقر: التمرير للأعلى بسلاسة
+backToTopBtn.onclick = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+};
+      
+      
+      
     </script>
 </body>
 </html>
