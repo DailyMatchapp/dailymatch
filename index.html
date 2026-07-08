@@ -166,14 +166,14 @@
         </div>
     </section>
 
-    <!-- قسم مباريات اليوم (الجديد) -->
+    <!-- قسم مباريات اليوم (تم تعديل التوقيت هنا) -->
     <section id="matches" class="py-16 bg-white dark:bg-black/20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-800 mb-2">أهم <span class="text-primary">مباريات اليوم</span></h2>
                 <div class="flex items-center justify-center gap-2 text-sm text-slate-500">
                     <i class="far fa-clock"></i>
-                    <p>المباريات بتوقيت جرينتش (GMT)</p>
+                    <p>المباريات بتوقيت المغرب (GMT+1)</p>
                 </div>
             </div>
 
@@ -235,13 +235,13 @@
 
         <!-- صورة الخلفية (ملعب كرة قدم مع تعتيم خفيف) -->
         <div class="absolute inset-0 z-10">
-            <img src="https://4kwallpapers.com/images/walls/thumbs_3t/19436.jpg" 
+            <img src="https://i.ibb.co/bjFDJ1PN/houston-texas-players-and-match-officials-line-up-before-the-fifa-world-cup-2026-round-of-16.webp" 
                  class="w-full h-full object-cover opacity-30 mix-blend-overlay transition-transform duration-700 group-hover:scale-110" 
                  alt="stadium background">
         </div>
 
         <!-- طبقة النقاط الجمالية (Pattern) -->
-        <div class="absolute inset-0 z-20 opacity-10 bg-[radial-gradient(circle,white_1px,transparent_1px)] bg-[size:20px_20px]"></div>
+        <div class="absolute inset-0 z-10 opacity-5 bg-[radial-gradient(circle,white_0px,transparent_0px)] bg-[size:0px_0px]"></div>
 
         <!-- المحتوى النصي -->
         <div class="relative z-30 p-10 sm:p-16 text-center text-white">
@@ -309,7 +309,7 @@
         <!-- حاوية الفيديو -->
         <div class="relative w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 ring-1 ring-white/10">
             
-            <!-- زر الإغلاق (تم نقله لليمين) -->
+            <!-- زر الإغلاق -->
             <button onclick="closeModal()" 
                     class="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-red-600 hover:scale-110 transition-all duration-300 border border-white/20 backdrop-blur-md group"
                     title="إغلاق">
@@ -331,16 +331,6 @@
         </div>
     </div>
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   <!-- زر العودة للأعلى -->
 <button id="backToTop" 
         class="fixed bottom-8 right-8 z-[60] w-12 h-12 bg-primary text-white rounded-full shadow-2xl shadow-blue-500/40 flex items-center justify-center opacity-0 invisible transition-all duration-500 hover:bg-blue-600 hover:scale-110 active:scale-90 transform translate-y-10 border border-white/10"
@@ -428,12 +418,9 @@ document.addEventListener('click', (event) => {
             const modal = document.getElementById('videoModal');
             const iframe = document.getElementById('videoIframe');
             
-            // رابط الفيديو (غير هذا الرابط برابط الفيديو الخاص بك)
-            // ملاحظة: تأكد من أن الرابط يحتوي على /embed/ وليس /watch?v=
             const videoUrl = "https://www.youtube.com/embed/5JAKo2MpPkg?si=3qEZ64HPbOwo_NJD"; 
             
             modal.classList.replace('hidden', 'flex');
-            // تأخير بسيط لتحسين تجربة التحميل
             setTimeout(() => {
                 iframe.src = videoUrl;
             }, 100);
@@ -446,7 +433,7 @@ document.addEventListener('click', (event) => {
             const iframe = document.getElementById('videoIframe');
             
             modal.classList.replace('flex', 'hidden');
-            iframe.src = ""; // إفراغ المصدر لإيقاف الصوت والفيديو فوراً
+            iframe.src = ""; 
             document.body.classList.remove('modal-open');
         }
 
@@ -464,6 +451,45 @@ document.addEventListener('click', (event) => {
         const LEAGUE_IMG_URL = 'https://ws.kora-api.top/uploads/league/';
         const blockedLeagues = [/NBA/i, /Formula 1/i, /NFL/i, /MotoGP/i];
 
+        // [جديد] دالة لتحويل التوقيت من GMT إلى توقيت الجزائر (GMT+1)
+        function convertGMTToAlgeria(timeStr) {
+            if (!timeStr || !timeStr.includes(':')) return timeStr;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            if (isNaN(hours) || isNaN(minutes)) return timeStr;
+            
+            // إضافة ساعة واحدة لتوقيت الجزائر
+            let newHours = (hours + 1) % 24;
+            
+            const formattedHours = String(newHours).padStart(2, '0');
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            return `${formattedHours}:${formattedMinutes}`;
+        }
+
+        // [جديد] دالة للتحقق مما إذا كان متبقي على بدء المباراة 15 دقيقة أو أقل
+        function isStartingSoon(timeStr) {
+            if (!timeStr || !timeStr.includes(':')) return false;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            if (isNaN(hours) || isNaN(minutes)) return false;
+
+            const now = new Date();
+            // إنشاء كائن تاريخ للمباراة بتوقيت UTC لليوم الحالي
+            const matchDate = new Date(Date.UTC(
+                now.getUTCFullYear(),
+                now.getUTCMonth(),
+                now.getUTCDate(),
+                hours,
+                minutes,
+                0
+            ));
+
+            const nowUTC = Date.now();
+            const diffMs = matchDate - nowUTC;
+            const diffMins = diffMs / (1000 * 60);
+
+            // تفعيل "بعد قليل" إذا كان متبقي على المباراة بين 1 إلى 15 دقيقة
+            return diffMins > 0 && diffMins <= 15;
+        }
+
         async function fetchMatches() {
             try {
                 const response = await fetch(API_URL);
@@ -476,8 +502,6 @@ document.addEventListener('click', (event) => {
                     return;
                 }
 
-                // تصفية المباريات (استبعاد المحظورة والملاكمة/UFC لتركيز العرض على الكرة في هذا القسم)
-                // إذا أردت عرض كل شيء، فقط أزل الفلتر الثاني
                 const filteredMatches = data.filter(match => {
                     for (let blocked of blockedLeagues) {
                         if (match.league && (blocked.test(match.league) || blocked.test(match.league_en))) return false;
@@ -506,7 +530,10 @@ document.addEventListener('click', (event) => {
         function createMatchHTML(data) {
             let statusText = "لم تبدأ";
             let statusClass = "bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400";
-            let scoreDisplay = data.time || "-:-"; // الوقت الافتراضي
+            
+            // [تعديل] تحويل وقت المباراة القادم من الـ API إلى توقيت الجزائر
+            const matchTimeAlgeria = convertGMTToAlgeria(data.time);
+            let scoreDisplay = matchTimeAlgeria || "-:-"; 
 
             if (data.status == 1) { // مباشر
                 statusText = `مباشر <span class="live-dot"></span>`;
@@ -517,14 +544,13 @@ document.addEventListener('click', (event) => {
                 statusClass = "bg-gray-200 text-gray-500 dark:bg-white/5 dark:text-gray-400";
                 scoreDisplay = data.score || "-";
             } else {
-                // محاولة تحسين عرض الوقت
-                 if (data.time) {
-                    // الوقت يأتي من ال API عادة، نعرضه كما هو
-                    scoreDisplay = data.time;
-                 }
+                // [تعديل] إذا لم تبدأ المباراة بعد، نتحقق هل متبقي 15 دقيقة أو أقل؟
+                if (isStartingSoon(data.time)) {
+                    statusText = "بعد قليل";
+                    statusClass = "bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 animate-pulse";
+                }
             }
 
-            // التعامل مع الصور المكسورة
             const homeLogo = data.home_logo ? `${TEAM_IMG_URL}${data.home_logo}` : 'https://via.placeholder.com/45?text=H';
             const awayLogo = data.away_logo ? `${TEAM_IMG_URL}${data.away_logo}` : 'https://via.placeholder.com/45?text=A';
             const leagueLogo = data.league_logo ? `${LEAGUE_IMG_URL}${data.league_logo}` : '';
@@ -568,43 +594,25 @@ document.addEventListener('click', (event) => {
         // تشغيل جلب المباريات عند تحميل الصفحة
         document.addEventListener('DOMContentLoaded', fetchMatches);
 
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
       // منطق زر العودة إلى الأعلى
 const backToTopBtn = document.getElementById('backToTop');
 
 window.addEventListener('scroll', () => {
     if (window.scrollY > 500) {
-        // إظهار الزر مع حركة دخول
         backToTopBtn.classList.remove('opacity-0', 'invisible', 'translate-y-10');
         backToTopBtn.classList.add('opacity-100', 'visible', 'translate-y-0');
     } else {
-        // إخفاء الزر مع حركة خروج
         backToTopBtn.classList.add('opacity-0', 'invisible', 'translate-y-10');
         backToTopBtn.classList.remove('opacity-100', 'visible', 'translate-y-0');
     }
 });
 
-// عند النقر: التمرير للأعلى بسلاسة
 backToTopBtn.onclick = () => {
     window.scrollTo({
         top: 0,
         behavior: 'smooth'
     });
 };
-      
-      
-      
     </script>
 </body>
 </html>
