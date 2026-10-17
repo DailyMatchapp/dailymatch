@@ -526,48 +526,54 @@ document.addEventListener('click', (event) => {
             return ASSET_BASE + String(path).replace(/^\/+/, '');
         }
 
-        // إنشاء كائن وقت دقيق للمباراة بصيغة UTC
-        function parseMatchDate(dateStr, timeStr) {
+
+
+
+
+
+
+
+
+
+       // 1. قراءة وقت وتاريخ غرينتش الصارم (UTC / GMT)
+        function parseMatchDateGMT(dateStr, timeStr) {
             if (!timeStr) return null;
-            const today = new Date().toISOString().slice(0, 10);
-            const d = dateStr || today;
-            const parts = timeStr.trim().split(':');
-            if (parts.length < 2) return null;
-            const h = String(parts[0]).padStart(2, '0');
-            const m = String(parts[1]).padStart(2, '0');
-            const dateObj = new Date(`${d}T${h}:${m}:00Z`);
+            const timeParts = timeStr.trim().split(':');
+            if (timeParts.length < 2) return null;
+
+            const h = String(timeParts[0]).padStart(2, '0');
+            const m = String(timeParts[1]).padStart(2, '0');
+
+            // إذا لم يتوفر التاريخ من المصدر نعتمد تاريخ اليوم الحالي بتوقيت غرينتش
+            let d = dateStr;
+            if (!d) {
+                const now = new Date();
+                d = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}-${String(now.getUTCDate()).padStart(2, '0')}`;
+            }
+
+            // إنشاء التاريخ بالتوقيت العالمي الموحد Z (غرينتش)
+            const dateObj = new Date(`${d.trim()}T${h}:${m}:00Z`);
             return isNaN(dateObj.getTime()) ? null : dateObj;
         }
 
-        // تحويل التوقيت بدقة بالغة إلى توقيت المغرب (Africa/Casablanca)
-        function formatMatchTimeMorocco(dateObj, fallbackTime) {
-            if (!dateObj) return fallbackTime || '--:--';
-            try {
-                return dateObj.toLocaleTimeString('en-GB', {
-                    timeZone: 'Africa/Casablanca',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                });
-            } catch (e) {
-                // في حال تعذر قراءة timezone
-                let h = (dateObj.getUTCHours() + 1) % 24;
-                let m = dateObj.getUTCMinutes();
-                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-            }
-        }
-
-        // تدقيق حالة المباراة والوقت المتبقي
+        // 2. تدقيق حالة المباراة والوقت بدقة كاملة بتوقيت غرينتش (GMT)
         function getMatchTimingStatus(m) {
             const statusNum = parseInt(m.status);
-            const matchDate = parseMatchDate(m.date, m.time);
-            const moroccoTime = formatMatchTimeMorocco(matchDate, m.time);
-            
+            const matchDateGMT = parseMatchDateGMT(m.date, m.time);
+
+            // استخراج وقت غرينتش مباشرة (ساعات:دقائق)
+            let gmtTime = m.time ? m.time.trim().slice(0, 5) : '--:--';
+            if (matchDateGMT) {
+                const gh = String(matchDateGMT.getUTCHours()).padStart(2, '0');
+                const gm = String(matchDateGMT.getUTCMinutes()).padStart(2, '0');
+                gmtTime = `${gh}:${gm}`;
+            }
+
             const homeScore = (m.home && m.home.score != null) ? m.home.score : (m.score ? m.score.split('-')[0] : 0);
             const awayScore = (m.away && m.away.score != null) ? m.away.score : (m.score ? m.score.split('-')[1] : 0);
             const currentScore = `${homeScore} - ${awayScore}`;
 
-            // 1. المباراة منتهية رسمياً
+            // 1. إذا كانت المباراة منتهية رسمياً في المصدر
             if (statusNum === 2) {
                 return {
                     statusText: "انتهت",
@@ -577,7 +583,31 @@ document.addEventListener('click', (event) => {
                 };
             }
 
-            // 2. المباراة جارية ومباشرة في الـ API
+            // فحص الفارق الزمني الحالي بتوقيت غرينتش
+            const nowUTC = Date.now();
+            const diffMinutes = matchDateGMT ? Math.floor((matchDateGMT.getTime() - nowUTC) / 60000) : null;
+
+            // 2. إذا كان موعد المباراة في المستقبل بتوقيت غرينتش (لم يحن وقتها بعد)
+            // يستحيل أن تظهر كمباشر هنا مهما كانت الأسباب:
+            if (diffMinutes !== null && diffMinutes > 0) {
+                if (diffMinutes <= 15) {
+                    return {
+                        statusText: `بعد ${diffMinutes} د`,
+                        statusClass: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 animate-pulse font-bold",
+                        scoreDisplay: gmtTime,
+                        order: 1
+                    };
+                }
+                return {
+                    statusText: "لم تبدأ",
+                    statusClass: "bg-blue-50 text-blue-600 dark:bg-white/5 dark:text-blue-400",
+                    scoreDisplay: gmtTime,
+                    order: 2
+                };
+            }
+
+            // 3. دخل موعد المباراة بتوقيت غرينتش (diffMinutes <= 0):
+            // نتحقق: هل أعلن المصدر رسمياً انطلاق صافرة البداية؟
             if (statusNum === 1 || statusNum === 3) {
                 return {
                     statusText: `مباشر <span class="live-dot"></span>`,
@@ -587,51 +617,25 @@ document.addEventListener('click', (event) => {
                 };
             }
 
-            // 3. فحص التوقيت الدقيق إذا كانت الحالة في الـ API لم تبدأ بعد (status = 0)
-            if (matchDate) {
-                const now = Date.now();
-                const diffMs = matchDate.getTime() - now;
-                const diffMinutes = Math.floor(diffMs / (1000 * 60));
-
-                // إذا حان وقت المباراة أو بدأت منذ دقائق وتأخر السيرفر في التحديث
-                if (diffMinutes <= 0 && diffMinutes > -115) {
-                    return {
-                        statusText: `جارية الآن <span class="live-dot"></span>`,
-                        statusClass: "bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400 font-bold",
-                        scoreDisplay: currentScore !== "0 - 0" ? currentScore : moroccoTime,
-                        order: 0
-                    };
-                }
-
-                // قبل البداية بـ 15 دقيقة أو أقل (تجهيز وانطلاق وشيك)
-                if (diffMinutes > 0 && diffMinutes <= 15) {
-                    return {
-                        statusText: `بعد قليل (${diffMinutes} د)`,
-                        statusClass: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 animate-pulse font-bold",
-                        scoreDisplay: moroccoTime,
-                        order: 1
-                    };
-                }
-
-                // قبل البداية بأقل من ساعة
-                if (diffMinutes > 15 && diffMinutes <= 60) {
-                    return {
-                        statusText: `بعد ${diffMinutes} دقيقة`,
-                        statusClass: "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300",
-                        scoreDisplay: moroccoTime,
-                        order: 2
-                    };
-                }
-            }
-
-            // 4. لم تبدأ بعد وباقي عليها أكثر من ساعة
+            // 4. حان موعد المباراة بتوقيت غرينتش ولكن المصدر ما زال يرسل (status = 0)
+            // تظهر عبارة "بانتظار الصافرة" مع الوقت فقط دون نقطة حمراء أو نتيجة وهمية
             return {
-                statusText: "لم تبدأ",
-                statusClass: "bg-blue-50 text-blue-600 dark:bg-white/5 dark:text-blue-400",
-                scoreDisplay: moroccoTime,
-                order: 2
+                statusText: "بانتظار الصافرة",
+                statusClass: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 font-bold",
+                scoreDisplay: gmtTime,
+                order: 1
             };
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         async function fetchMatches() {
             try {
