@@ -396,104 +396,32 @@
   
   
   
-  <!-- نافذة تنبيه مانع الإعلانات (Anti-AdBlock) -->
-<div id="adblock-warning" class="hidden fixed inset-0 z-[99999] bg-slate-950/90 backdrop-blur-md items-center justify-center p-4 transition-all duration-300">
-    <div class="bg-white dark:bg-cardBg max-w-md w-full p-8 rounded-[2rem] border border-gray-200 dark:border-white/10 shadow-2xl text-center relative overflow-hidden">
-        
-        <!-- تأثير جمالي في الخلفية -->
-        <div class="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl -z-10"></div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
-        <!-- أيقونة التحذير -->
-        <div class="w-20 h-20 bg-red-500/10 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
-            <i class="fas fa-shield-halved"></i>
-        </div>
-
-        <!-- النصوص -->
-        <h3 class="text-2xl font-800 mb-3 text-slate-900 dark:text-white">عذراً، تم اكتشاف مانع إعلانات</h3>
-        <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8">
-            تطبيق <span class="text-primary font-bold">Daily Match</span> ومباريات اليوم تقدم مجاناً بالكامل بفضل الإعلانات. يرجى إيقاف مانع الإعلانات أو تعطيل حماية المتصفح (Brave Shields) لدعمنا واستمرار البث.
-        </p>
-
-        <!-- زر التحديث -->
-        <button onclick="location.reload()" 
-                class="w-full py-4 bg-primary text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-lg shadow-blue-500/30 active:scale-95 flex items-center justify-center gap-2">
-            <i class="fas fa-rotate-right"></i>
-            تم التعطيل، تحديث الصفحة
-        </button>
-    </div>
-</div>
-
-<script>
-    async function runAntiAdBlock() {
-        let isBlocked = false;
-
-        // الاختبار الأول: فحص إغلاق سكريبتات الإعلانات الحقيقية الموجودة في صفحتك (czernik.org)
-        try {
-            const adCheck = await fetch('https://czernik.org/22/e9088b9a3e17209f0be3b96ef902dd96', {
-                method: 'HEAD',
-                mode: 'no-cors',
-                cache: 'no-store'
-            });
-        } catch (err) {
-            // متصفح Brave أو المانع حظر الاتصال بالشبكة الإعلانية
-            isBlocked = true;
-        }
-
-        // الاختبار الثاني: إنشاء حاوية إعلانية شبكية تحاكي شبكات الإعلانات (Brave يحظرها فوراً)
-        if (!isBlocked) {
-            const bait = document.createElement('div');
-            bait.className = 'pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads ad-banner adsbox';
-            bait.style.cssText = 'width: 1px !important; height: 1px !important; position: absolute !important; left: -10000px !important; top: -10000px !important;';
-            document.body.appendChild(bait);
-
-            // ننتظر قليلاً ليقوم Brave بتطبيق قواعد الإخفاء
-            await new Promise(resolve => setTimeout(resolve, 150));
-
-            const style = window.getComputedStyle(bait);
-            if (
-                bait.offsetHeight === 0 || 
-                bait.offsetWidth === 0 || 
-                style.getPropertyValue('display') === 'none' || 
-                style.getPropertyValue('visibility') === 'hidden'
-            ) {
-                isBlocked = true;
-            }
-            bait.remove();
-        }
-
-        // الاختبار الثالث: فحص تحميل الصورة الإعلانية الشبكية الشائعة
-        if (!isBlocked) {
-            const imgBait = new Image();
-            imgBait.src = 'https://pagead2.googlesyndication.com/pagead/img/000/banner.gif?' + Math.random();
-            await new Promise((resolve) => {
-                imgBait.onerror = () => { isBlocked = true; resolve(); };
-                imgBait.onload = () => { resolve(); };
-                setTimeout(resolve, 300); // Timeout للمنع الشديد
-            });
-        }
-
-        // إذا تم اكتشاف الحظر بأي من الطرق
-        if (isBlocked) {
-            showAdblockWarning();
-        }
-    }
-
-    function showAdblockWarning() {
-        const warningModal = document.getElementById('adblock-warning');
-        if (warningModal) {
-            warningModal.classList.remove('hidden');
-            warningModal.classList.add('flex');
-            document.body.classList.add('modal-open');
-        }
-    }
-
-    // تشغيل الفحص فور الجاهزية
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runAntiAdBlock);
-    } else {
-        runAntiAdBlock();
-    }
-</script>
 
 
 
