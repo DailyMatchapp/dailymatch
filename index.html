@@ -408,8 +408,147 @@
   
   
   
-  
-  
+  <!-- ================= سكريبت كشف مانع الإعلانات القاطع ================= -->
+<div id="dm-adblock-box" class="ad-banner adsbox pub_300x250 textads banner-ad" style="position: absolute !important; left: -9999px !important; top: -9999px !important; width: 300px !important; height: 250px !important; pointer-events: none !important;">&nbsp;</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // 1. إنشاء واجهة الحظر بتصميم متناسق مع موقعك
+    const overlayId = 'dm-strict-overlay';
+    
+    function createWarningUI() {
+        if (document.getElementById(overlayId)) return;
+
+        const overlay = document.createElement('div');
+        overlay.id = overlayId;
+        overlay.style.cssText = `
+            display: none;
+            position: fixed !important;
+            top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            z-index: 2147483647 !important;
+            background: rgba(15, 23, 42, 0.95) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+            direction: rtl !important;
+            font-family: 'Cairo', sans-serif !important;
+        `;
+
+        overlay.innerHTML = `
+            <div style="
+                background: #1e293b !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                border-radius: 28px !important;
+                padding: 35px 25px !important;
+                max-width: 440px !important;
+                width: 100% !important;
+                text-align: center !important;
+                box-shadow: 0 25px 60px rgba(0,0,0,0.8) !important;
+                color: #ffffff !important;
+            ">
+                <div style="width: 75px; height: 75px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <i class="fas fa-shield-halved" style="font-size: 35px; color: #ef4444;"></i>
+                </div>
+                <h3 style="font-size: 22px; font-weight: 800; margin: 0 0 12px; color: #fff;">تم اكتشاف مانع الإعلانات</h3>
+                <p style="font-size: 14px; line-height: 1.8; color: #94a3b8; margin: 0 0 24px;">
+                    تطبيق <strong style="color: #3b82f6;">Daily Match</strong> مجاني بالكامل بفضل الإعلانات.<br>
+                    يرجى <strong style="color: #f59e0b;">إيقاف درع Brave</strong> أو تعطيل مانع الإعلانات لمتابعة مشاهدة المباريات.
+                </p>
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 14px; font-size: 13px; color: #cbd5e1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fas fa-sync fa-spin" style="color: #3b82f6;"></i>
+                    <span>سيفتح الموقع تلقائياً بمجرد إيقاف المانع...</span>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    // 2. الفحص الذكي متعدد الطبقات
+    async function isAdBlocked() {
+        if (!navigator.onLine) return false;
+
+        // فحص أ: هل درع Brave أو مانع الإعلانات يحظر سكريبت موقعك الفعلي (czernik)؟
+        try {
+            const czernikCheck = await fetch('https://czernik.org/14/8b8946f8ecabcee8c9fd7cd77d5cab94', {
+                method: 'HEAD',
+                mode: 'no-cors',
+                cache: 'no-store'
+            });
+        } catch (e) {
+            return true; // Brave أو المانع حظر نطاق الإعلانات لموقعك فوراً!
+        }
+
+        // فحص ب: هل تم إخفاء صندوق الإعلانات الوهمي في الصفحة؟
+        const testBox = document.getElementById('dm-adblock-box');
+        if (testBox) {
+            const style = window.getComputedStyle(testBox);
+            if (
+                style.display === 'none' ||
+                style.visibility === 'hidden' ||
+                testBox.offsetParent === null ||
+                testBox.offsetHeight === 0
+            ) {
+                return true; // المانع قام بحظر وإخفاء العنصر عبر فلاتر CSS
+            }
+        }
+
+        // فحص ج: فحص درع Brave الداخلي (Brave Shields Engine)
+        if (navigator.brave && typeof navigator.brave.isBrave === 'function') {
+            const isBrave = await navigator.brave.isBrave();
+            if (isBrave) {
+                // في Brave، نقوم بإنشاء طلب استعلامي لشبكة إعلانات ثانية
+                try {
+                    await fetch('https://adservice.google.com/adsid/integrator.js', {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-store'
+                    });
+                } catch (err) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // 3. إدارة إظهار وإخفاء الرسالة لحظياً
+    function setWarning(blocked) {
+        const overlay = document.getElementById(overlayId);
+        if (!overlay) return;
+
+        if (blocked) {
+            overlay.style.setProperty('display', 'flex', 'important');
+            document.body.style.setProperty('overflow', 'hidden', 'important');
+        } else {
+            overlay.style.setProperty('display', 'none', 'important');
+            document.body.style.removeProperty('overflow');
+        }
+    }
+
+    // 4. المحرك اللحظي: يفحص باستمرار كل ثانية
+    async function startLoop() {
+        createWarningUI();
+        const blocked = await isAdBlocked();
+        setWarning(blocked);
+    }
+
+    startLoop();
+    setInterval(startLoop, 1000);
+
+    // إعادة الفحص فور فتح المتصفح أو العودة للتبويب
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) startLoop();
+    });
+})();
+</script>
+<!-- ==================================================================== -->
   
   
   
