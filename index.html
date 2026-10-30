@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
+
+<!-- مكتبة Swiper -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+
 <script data-cfasync="false" src="https://czernik.org/14/8b8946f8ecabcee8c9fd7cd77d5cab94"></script>
 <script data-cfasync="false" src="https://capitalhospitals.org/1/00b4b72d21b91ba4ae3a6ecc169d9903"></script>
     
@@ -29,16 +35,82 @@
     </script>
     
     <style>
-        .fade-img { transition: opacity 1s ease-in-out; opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .fade-img.active { opacity: 1; position: relative; }
+        
+        .phone-swiper { 
+            width: 100%; 
+            height: 100%; 
+            border-radius: 3px;
+        }
+        .phone-swiper .swiper-slide { 
+            width: 100%; 
+            height: 100%; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+        }
+        .phone-swiper .swiper-slide img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: fill; 
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+      
+        .phone-pagination {
+            position: relative !important;
+            bottom: auto !important;
+            left: auto !important;
+            transform: none !important;
+            margin-top: 15px;
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            width: 100% !important;
+            z-index: 20;
+        }
+
+        .phone-pagination .swiper-pagination-bullet {
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(148, 163, 184, 0.25);
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            margin: 0 !important;
+            cursor: pointer;
+        }
+
+        .dark .phone-pagination .swiper-pagination-bullet {
+            background: rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .phone-pagination .swiper-pagination-bullet-active {
+            background: #3b82f6 !important;
+            width: 34px !important;
+            border-radius: 12px !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        
         body.modal-open { overflow: hidden; }
         .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .dark .glass-nav { background: rgba(15, 23, 42, 0.8); }
         
-        /* حركة تبديل الأيقونات */
+        
         #themeToggle i { transition: transform 0.4s ease, opacity 0.4s ease; }
 
-        /* تأثير النبض للمباشر */
+       
         .live-dot {
             display: inline-block;
             width: 8px;
@@ -154,19 +226,67 @@
                     </div>
                 </div>
 
-                <div class="mt-16 lg:mt-0 lg:col-span-5 flex justify-center lg:justify-end relative">
+              <!-- قسم الهاتف مع السلايدر المتوافق مع الوضعين المظلم والفاتح -->
+                <div class="mt-16 lg:mt-0 lg:col-span-5 flex flex-col items-center lg:items-end justify-center relative">
                     <div class="relative w-full max-w-[240px] sm:max-w-[280px]">
                         <div class="relative z-10 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl border-[6px] sm:border-[8px] border-slate-900 dark:border-cardBg overflow-hidden bg-slate-100 aspect-[9/20]">
-                            <img src="https://i.ibb.co/zWGsQ389/Screenshot-20260217-182109.jpg" class="fade-img active" alt="Screen 1">
-                            <img src="https://i.ibb.co/LdCPnTjj/Screenshot-20260217-182128.jpg" class="fade-img" alt="Screen 2">
-                            <img src="https://i.ibb.co/vCH94p64/Screenshot-20260217-182138.jpg" class="fade-img" alt="Screen 3">
-                            <img src="https://i.ibb.co/XkvRJm9G/Screenshot-20260217-182148.jpg" class="fade-img" alt="Screen 4">
-                            <img src="https://i.ibb.co/PGHGFyWd/Screenshot-20260217-182206.jpg" class="fade-img" alt="Screen 5">
-                           <img src="https://i.ibb.co/h1cLcNQz/Screenshot-20260217-182219.jpg" class="fade-img" alt="Screen 6">
+                            
+                            <!-- سلايدر Swiper -->
+                            <div class="swiper phone-swiper">
+                                <div class="swiper-wrapper">
+
+                                    <!-- الشريحة 1 -->
+                                    <div class="swiper-slide">
+                                        <!-- الصورة البيضاء (فاتح) -->
+                                        <img src="https://i.ibb.co/qM0NC1mf/Screenshot-20261030-082603.jpg" class="block dark:hidden" alt="Screen Light 1">
+                                        <!-- الصورة السوداء (مظلم) -->
+                                        <img src="https://i.ibb.co/5xsJkjnj/Screenshot-20261030-082652.jpg" class="hidden dark:block" alt="Screen Dark 1">
+                                    </div>
+
+                                    <!-- الشريحة 2 -->
+                                    <div class="swiper-slide">
+                                        <!-- الصورة البيضاء (فاتح) -->
+                                        <img src="https://i.ibb.co/FLC9N8W2/Screenshot-20261030-082712.jpg" class="block dark:hidden" alt="Screen Light 2">
+                                        <!-- الصورة السوداء (مظلم) -->
+                                        <img src="https://i.ibb.co/BKssVppt/Screenshot-20261030-082718.jpg" class="hidden dark:block" alt="Screen Dark 2">
+                                    </div>
+
+                                    <!-- الشريحة 3 -->
+                                    <div class="swiper-slide">
+                                        <!-- الصورة البيضاء (فاتح) -->
+                                        <img src="https://i.ibb.co/4wCjs3Ff/Screenshot-20261030-082732.jpg" class="block dark:hidden" alt="Screen Light 3">
+                                        <!-- الصورة السوداء (مظلم) -->
+                                        <img src="https://i.ibb.co/p67xKWrx/Screenshot-20261030-082738.jpg" class="hidden dark:block" alt="Screen Dark 3">
+                                    </div>
+
+                                    <!-- الشريحة 4 -->
+                                    <div class="swiper-slide">
+                                        <!-- الصورة البيضاء (فاتح) -->
+                                        <img src="https://i.ibb.co/8VYKVQL/Screenshot-20261030-082748.jpg" class="block dark:hidden" alt="Screen Light 4">
+                                        <!-- الصورة السوداء (مظلم) -->
+                                        <img src="https://i.ibb.co/3wGk5sL/Screenshot-20261030-082755.jpg" class="hidden dark:block" alt="Screen Dark 4">
+                                    </div>
+
+                                    <!-- الشريحة 5 -->
+                                    <div class="swiper-slide">
+                                        <!-- الصورة البيضاء (فاتح) -->
+                                        <img src="https://i.ibb.co/Vp9r7CbD/Screenshot-20261030-082819.jpg" class="block dark:hidden" alt="Screen Light 5">
+                                        <!-- الصورة السوداء (مظلم) -->
+                                        <img src="https://i.ibb.co/XxycmdRS/Screenshot-20261030-082830.jpg" class="hidden dark:block" alt="Screen Dark 5">
+                                    </div>
+
+                                </div>
+                            </div>
+
                         </div>
                         <div class="absolute -inset-4 bg-primary/30 rounded-[4rem] blur-3xl -z-10"></div>
+                        
+                        <!-- نقاط الترقيم أسفل صور الهاتف -->
+                        <div class="swiper-pagination phone-pagination"></div>
                     </div>
                 </div>
+                
+                
             </div>
         </div>
     </section>
@@ -655,14 +775,26 @@ document.addEventListener('click', (event) => {
     }
 });
 
-        // 3. السلايدر
-        let currentIdx = 0;
-        const slides = document.querySelectorAll('.fade-img');
-        setInterval(() => {
-            slides[currentIdx].classList.remove('active');
-            currentIdx = (currentIdx + 1) % slides.length;
-            slides[currentIdx].classList.add('active');
-        }, 5000);
+        // 3. تشغيل سلايدر الهاتف
+        const phoneSwiper = new Swiper('.phone-swiper', {
+            loop: true,
+            effect: 'slide',
+            speed: 600,
+            autoplay: {
+                delay: 3500,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true
+            },
+            pagination: {
+                el: '.phone-pagination',
+                clickable: true,
+                renderBullet: function (index, className) {
+                    return '<span class="' + className + '">' + (index + 1) + "</span>";
+                }
+            },
+            grabCursor: true,
+            touchRatio: 1.2
+        });
 
       // 4. المودال
       function openModal() {
